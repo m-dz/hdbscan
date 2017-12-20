@@ -288,6 +288,8 @@ cdef class BoruvkaAlgorithm (object):
         self.tree = self._create_tree(tree_data=tree.data, metric=metric,
                                       leaf_size=leaf_size, **kwargs)
         print('1. Tree created')
+        print(self.tree.data)
+        print(np.asarray(self.tree.data))
         self._data = np.array(self.tree.data)
         self._raw_data = self.tree.data
         self.sample_weights = sample_weights
@@ -532,25 +534,6 @@ cdef class BoruvkaAlgorithm (object):
         for n in range(self.num_nodes):
             self.bounds_arr[n] = <np.double_t> DBL_MAX
 
-    # From BallTree version
-    cpdef spanning_tree(self):
-        """Compute the minimum spanning tree of the data held by
-        the tree passed in at construction"""
-
-        cdef np.intp_t num_components
-        cdef np.intp_t num_nodes
-
-        num_components = self.tree.data.shape[0]
-        num_nodes = self.tree.node_data.shape[0]
-        while num_components > 1:
-            self.dual_tree_traversal(0, 0)
-            num_components = self.update_components()
-
-        return self.edges
-
-    def _create_tree(self, tree_data, metric, leaf_size, **kwargs):
-        pass
-
 
 cdef class KDTreeBoruvkaAlgorithm (BoruvkaAlgorithm):
 
@@ -569,6 +552,24 @@ cdef class KDTreeBoruvkaAlgorithm (BoruvkaAlgorithm):
         print('def KDTree _create_tree')
         print(type(tree_data))
         return KDTree(tree_data, metric=metric, leaf_size=leaf_size, **kwargs)
+
+    # If in BoruvkaAlgorithm throws AttributeError:
+    # 'hdbscan._hdbscan_boruvka.KDTreeBoruvkaAlgorithm' object has no attribute 'dual_tree_traversal'
+    # From BallTree version
+    cpdef spanning_tree(self):
+        """Compute the minimum spanning tree of the data held by
+        the tree passed in at construction"""
+
+        cdef np.intp_t num_components
+        cdef np.intp_t num_nodes
+
+        num_components = self.tree.data.shape[0]
+        num_nodes = self.tree.node_data.shape[0]
+        while num_components > 1:
+            self.dual_tree_traversal(0, 0)
+            num_components = self.update_components()
+
+        return self.edges
 
     cdef int dual_tree_traversal(self, np.intp_t node1,
                                  np.intp_t node2) nogil except -1:
