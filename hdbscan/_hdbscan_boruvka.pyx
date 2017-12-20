@@ -291,20 +291,29 @@ cdef class BoruvkaAlgorithm (object):
         print(self.tree.data)
         print(np.asarray(self.tree.data))
         self._data = np.array(self.tree.data)
+        print('Done 1')
         self._raw_data = self.tree.data
+        print('Done 2a')
+        print(sample_weights)
+        print(type(sample_weights))
         self.sample_weights = sample_weights
+        print('Done 2b')
         self.node_bounds = self.tree.node_bounds
+        print('Done 2c')
         self.min_samples = min_samples
+        print('Done 2d')
         self.alpha = alpha
+        print('Done 2e')
         self.approx_min_span_tree = approx_min_span_tree
+        print('Done 2f')
         self.n_jobs = n_jobs
-
+        print('Done 2g')
         self.num_points = self.tree.data.shape[0]
         self.num_features = self.tree.data.shape[1]
         self.num_nodes = self.tree.node_data.shape[0]
 
         self.dist = dist_metrics.DistanceMetric.get_metric(metric, **kwargs)
-
+        print('Done 3')
         self.components = np.arange(self.num_points)
         self.bounds_arr = np.empty(self.num_nodes, np.double)
         self.component_of_point_arr = np.empty(self.num_points, dtype=np.intp)
@@ -314,13 +323,13 @@ cdef class BoruvkaAlgorithm (object):
         self.candidate_distance_arr = np.empty(self.num_points,
                                                dtype=np.double)
         self.component_union_find = BoruvkaUnionFind(self.num_points)
-
+        print('Done 4')
         self.edges = np.empty((self.num_points - 1, 3))
         self.num_edges = 0
 
         self.idx_array = self.tree.idx_array
         self.node_data = self.tree.node_data
-
+        print('Done 5')
         self.bounds = (<np.double_t[:self.num_nodes:1]> (<np.double_t *>
                                                          self.bounds_arr.data))
         self.component_of_point = (<np.intp_t[:self.num_points:1]> (
@@ -333,7 +342,7 @@ cdef class BoruvkaAlgorithm (object):
             <np.intp_t *> self.candidate_point_arr.data))
         self.candidate_distance = (<np.double_t[:self.num_points:1]> (
             <np.double_t *> self.candidate_distance_arr.data))
-
+        print('Done 6')
         self._initialize_components()
         print('self._initialize_components()')
         self._compute_bounds()

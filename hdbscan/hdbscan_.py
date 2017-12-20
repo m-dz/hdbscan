@@ -230,7 +230,8 @@ def _hdbscan_boruvka_kdtree(X, sample_weights=None, min_samples=5, alpha=1.0,
         X = X.astype(np.float64)
 
     tree = KDTree(X, metric=metric, leaf_size=leaf_size, **kwargs)
-    alg = KDTreeBoruvkaAlgorithm(tree, sample_weights, min_samples, metric=metric,
+    alg = KDTreeBoruvkaAlgorithm(tree, sample_weights=sample_weights,
+                                 min_samples=min_samples, metric=metric,
                                  leaf_size=leaf_size // 3,
                                  approx_min_span_tree=approx_min_span_tree,
                                  n_jobs=core_dist_n_jobs, **kwargs)
@@ -264,7 +265,8 @@ def _hdbscan_boruvka_balltree(X, sample_weights=None, min_samples=5, alpha=1.0,
     print(metric)
 
     tree = BallTree(X, metric=metric, leaf_size=leaf_size, **kwargs)
-    alg = BallTreeBoruvkaAlgorithm(tree, min_samples, metric=metric,
+    alg = BallTreeBoruvkaAlgorithm(tree, sample_weights=sample_weights,
+                                   min_samples=min_samples, metric=metric,
                                    leaf_size=leaf_size // 3,
                                    approx_min_span_tree=approx_min_span_tree,
                                    n_jobs=core_dist_n_jobs, **kwargs)
